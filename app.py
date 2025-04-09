@@ -1,34 +1,62 @@
 import streamlit as st
 import pandas as pd
 import duckdb
+import io
+
+csv = """
+beverage,price
+orange juice,2.5
+Expresso,2
+Tea,3
+"""
+
+beverages = pd.read_csv(io.StringIO(csv))
+
+csv2 = """
+food_item,food_price
+cookie juice,2.5
+chocolatine,2
+muffin,3
+"""
+
+food_items = pd.read_csv(io.StringIO(csv2))
+
+answer = """
+Select * from beverage \n
+cross join food_items
+"""
+
+solution = duckdb.sql(answer).df()
 
 st.write("# SQL SRS \n" "Space repetition system SQL practice")
 
-option = st.selectbox(
-    "Choisi ton thème de révision",
-    ("Jointure", "Group By", "Windows Function", "sans catégorie"),
-    index=None,
-    placeholder="Choisi ton thème de révision...",
-)
+with st.sidebar:
+    option = st.selectbox(
+        "Choisi ton thème de révision",
+        ("Jointure", "Group By", "Windows Function", "sans catégorie"),
+        index=None,
+        placeholder="Choisi ton thème de révision...",
+    )
 
-st.write("Vous avez choisi: ", option)
+    st.write("Vous avez choisi: ", option)
 
-data = {"col1": ["chien", "chat", "loup"], "col2": [2, 3, 5]}
-df = pd.DataFrame(data)
 
-tab1, tab2 = st.tabs(["dataframe", "sql"])
+st.header("Votre code ici:")
+query = st.text_area(label="Votre code SQL ici", key="user input")
+if query:
+    result = duckdb.sql(query).df()
+    st.dataframe(result)
+
+
+tab1, tab2 = st.tabs(["Tables", "Solutions"])
 
 with tab1:
-    input_text = st.text_area("Text input")
-    st.write(input_text)
+    st.write("table: beverages")
+    st.dataframe(beverages)
+    st.write("table: food_items")
+    st.dataframe(food_items)
+    st.write("Expected")
+    st.dataframe(solution)
 
 with tab2:
-    input_column = st.text_area("Colonne SQL à requêter")
-    if input_column in df.columns:
-        query = f"""
-                SELECT * FROM df WHERE {input_column} > 2
-                """
-        df_tmp = duckdb.query(query).df()
-        st.dataframe(df_tmp)
-    else:
-        st.write("La colonne spécifiée n'existe pas dans le DataFrame.")
+    st.write(answer)
