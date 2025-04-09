@@ -9,13 +9,16 @@ df = pd.DataFrame(data)
 tab1, tab2 = st.tabs(["dataframe", "sql"])
 
 with tab1:
-    input = st.text_area("Text input")
-    st.write(input)
+    input_text = st.text_area("Text input")
+    st.write(input_text)
 
 with tab2:
-    input = st.text_area("Colonne sql a requeter")
-    query = f"""
-            Select * from df where {input} > 2
-            """
-    df_tmp = duckdb.query(query).df()
-    st.dataframe(df_tmp)
+    input_column = st.text_area("Colonne SQL à requêter")
+    if input_column in df.columns:
+        query = f"""
+                SELECT * FROM df WHERE {input_column} > 2
+                """
+        df_tmp = duckdb.query(query).df()
+        st.dataframe(df_tmp)
+    else:
+        st.write("La colonne spécifiée n'existe pas dans le DataFrame.")
