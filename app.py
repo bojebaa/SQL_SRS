@@ -3,17 +3,6 @@ import pandas as pd
 import duckdb
 import io
 
-st.write("# SQL SRS \n" "Space repetition system SQL practice")
-
-option = st.selectbox(
-    "Choisi ton thème de révision",
-    ("Jointure", "Group By", "Windows Function", "sans catégorie"),
-    index=None,
-    placeholder="Choisi ton thème de révision...",
-)
-
-st.write("Vous avez choisi: ", option)
-
 csv = """
 beverage,price
 orange juice,2.5
@@ -38,6 +27,19 @@ cross join food_items
 """
 
 solution = duckdb.sql(answer).df()
+
+st.write("# SQL SRS \n" "Space repetition system SQL practice")
+
+with st.sidebar:
+    option = st.selectbox(
+        "Choisi ton thème de révision",
+        ("Jointure", "Group By", "Windows Function", "sans catégorie"),
+        index=None,
+        placeholder="Choisi ton thème de révision...",
+    )
+
+    st.write("Vous avez choisi: ", option)
+
 
 st.header("Votre code ici:")
 query = st.text_area(label="Votre code SQL ici", key="user input")
