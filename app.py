@@ -22,9 +22,12 @@ muffin,3
 food_items = pd.read_csv(io.StringIO(csv2))
 
 answer = """
-Select * from beverage \n
+Select * from beverage
 cross join food_items
 """
+
+duckdb.register("beverage", beverages)
+duckdb.register("food_items", food_items)
 
 solution = duckdb.sql(answer).df()
 
